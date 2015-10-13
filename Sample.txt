@@ -1,0 +1,123 @@
+<TCP SAMPLES>
+
+SERVER
+------------------
+> java ServerTcp 8951 -d
+// the happy path
+	Server waiting for client on port 8951
+	Client from /127.0.0.1:60048 wishes to authenticate
+	Received command from client: 127.0.0.1:8951 Flan_Zambini check 0.0
+	Sent challenge text: HSTWOWVKTFHYNGBRMOIKLXPJCOTQCVMPHVHYBXAOJRGTADAYTWJBJQOBTGGMACCN
+	Flan_Zambini authenticated successfully.
+	Closing connection.
+
+//wrong password
+	Client from /127.0.0.1:60053 wishes to authenticate
+	Received command from client: 127.0.0.1:8951 Flan_Zambini check 0.0
+	Sent challenge text: KEAXKXVXOUXWCCNQDECVLSYUWXHEEHHEXTNXKJPYVECMXJMCVGQAVHBUBEHFDRUC
+	User Flan_Zambini failed to authenticate.
+
+// nonexistent username
+	Client from /127.0.0.1:60057 wishes to authenticate
+	Received command from client: 127.0.0.1:8951 Dude_Broguy check 0.0
+	Disconnected: Client provided nonexistent username.
+
+CLIENT CONNECTIONS
+------------------
+// the happy path
+> java RemoteBankTcp 127.0.0.1:8951 "Flan_Zambini" "happy123" check -d
+	User Flan_Zambini sending "check" command to destination 127.0.0.1:8951.
+	Authentication: server is processing credentials.
+	Received challenge, generating hash.
+	Thanks for connecting Flan_Zambini. Your current balance is $0.00.
+	Closing connection.
+
+// wrong password
+> java RemoteBankTcp 127.0.0.1:8951 "Flan_Zambini" "happy12" check -d
+	User Flan_Zambini sending "check" command to destination 127.0.0.1:8951.
+	Authentication: server is processing credentials.
+	Received challenge, generating hash.
+	Error: authentication failed
+
+// nonexistent username
+> java RemoteBankTcp 127.0.0.1:8951 "Dude_Broguy" "sup420" check -d
+	User Dude_Broguy sending "check" command to destination 127.0.0.1:8951.
+	Authentication: server is processing credentials.
+	Error: user not present in system.
+
+</TCP SAMPLES>
+
+<UDP SAMPLES>
+
+SERVER
+------------------
+> java ServerUdp 8951 -d
+// the happy path
+	Server waiting for client on port 8951
+	Authentication request
+	Got ping from /127.0.0.1:41373.
+	Sending ACK and request for username.
+	Got username Flan_Zambini
+	Send challenge text: YQIRHIVJXUVASPUDEXJOEMTHUDDQQALJVYMGHUMMDHCNCBXMVENMQCFFCKUEIXVE
+	Received FIN (client ending connection).
+	Sent FIN.
+	Received FIN_ACK.
+
+// wrong password
+	Authentication request
+	Got ping from /127.0.0.1:33931.
+	Sending ACK and request for username.
+	Got username Flan_Zambini
+	Send challenge text: JAPQASVVCEJSKSCXEJXFIAQBLEEYGJRBKJMHTKDYBAQJIUSSLSCBDGLDBBPPFSBX
+	Received FIN (client ending connection).
+	Sent FIN.
+	Received FIN_ACK.
+	
+// nonexistent username
+	Authentication request
+	Got ping from /127.0.0.1:33739.
+	Sending ACK and request for username.
+	Got username Dude_Broguy
+	Send challenge text: KTMXOCXCSJXBXWNYEJNEPVTYPBDJDGMRNDIXHXBGGDHREDHUTIYNQDSRUNEXVKLA
+	Received FIN (client ending connection).
+	Sent FIN.
+	Received FIN_ACK.
+
+// ???
+	Authentication request
+	Got ping from /127.0.0.1:42789.
+	Sending ACK and request for username.
+	Got username Flan_Zambini
+	Send challenge text: KPEIWBTJBSKIHEYVJBYVCJOTDOFWBDPAJXPCQUPVTDYXIQSBKIPVBXRYRKQPBGNW
+	Received FIN (client ending connection).
+	Sent FIN.
+	Received FIN_ACK.
+
+CLIENT CONNECTIONS
+------------------
+// the happy path
+> java RemoteBankUdp 127.0.0.1:8951 "Flan_Zambini" "happy123" deposit 500 -d
+	Flan_Zambini: Sending authentication request.
+	Received challenge text: EIOOVWPVVHNUECVPWLKBWDYVSQRCBAEFSXTCLVFQLYYFTWQWNGETCJMEAIMJRSIC
+	Flan_Zambini, current balance is $0.00. After this deposit, your balance is now $500.00.
+	Successful transaction, sending FIN (ending connection).
+
+// wrong password
+> java RemoteBankUdp 127.0.0.1:8951 "Flan_Zambini" "happy13" deposit 500 -d
+	Flan_Zambini: Sending authentication request.
+	Received challenge text: JAPQASVVCEJSKSCXEJXFIAQBLEEYGJRBKJMHTKDYBAQJIUSSLSCBDGLDBBPPFSBX
+	Transaction failed, sending FIN (ending connection).
+
+// nonexistent username
+> java RemoteBankUdp 127.0.0.1:8951 "Dude_Broguy" "sup420" deposit 500 -d
+	Dude_Broguy: Sending authentication request.
+	Received challenge text: KTMXOCXCSJXBXWNYEJNEPVTYPBDJDGMRNDIXHXBGGDHREDHUTIYNQDSRUNEXVKLA
+	Transaction failed, sending FIN (ending connection).
+
+// ???
+> java RemoteBankUdp 127.0.0.1:8951 "Flan_Zambini" "happy123" deposit 500 -d
+	Flan_Zambini: Sending authentication request.
+	Received challenge text: KPEIWBTJBSKIHEYVJBYVCJOTDOFWBDPAJXPCQUPVTDYXIQSBKIPVBXRYRKQPBGNW
+	Transaction failed, sending FIN (ending connection).
+
+</UDP SAMPLES>

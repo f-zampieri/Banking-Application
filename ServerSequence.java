@@ -1,0 +1,8 @@
+public enum ServerSequence {
+	REQUEST_USERNAME,
+	SEND_CHALLENGE,
+	CHALLENGE_RESULT,
+	SEND_RESULT,
+	FIN,
+	FIN_ACK;
+}

@@ -1,0 +1,7 @@
+The format for user profiles is as follows:
+<Name> | <Password> [| Optional Starting Balance]
+Note balances are stored as number of cents, an integer quantity.
+---
+Flan_Zambini | happy123
+Frank_Gianpierro | sad123 | 0500
+Franny_Giazzini | justok123
